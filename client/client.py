@@ -1,11 +1,14 @@
 import socket
 import sys
+import os
+
 
 HEADER = 4096
 PORT = int(sys.argv[2])
 FORMAT = "utf-8"
-DC = "SO LONG, SEE YOU LATER"
+DC = "GOODBYE"
 SERVER = "localhost"
+
 #SERVER = sys.argv[1] would be used if we would bind to 137.151.27.1 which is ecs.fullerton.edu IP
 ADDR = (SERVER, PORT)
 
@@ -22,10 +25,30 @@ def send(msg):
     client.send(message)
 
 
-send("TESTING BABY")
-input()
-send("TESTING BABY")
-input()
-send("TESTING BABY")
-send(DC)
+connected = True
+while connected:
+	
+	command = input("ftp> ".split())
+	
+	if len(command) == 0:
+		continue
+	#allows user to exit with the following quit command
+	if command == "quit":
+		send(DC)
+		print(f"[DISCONNECTING] from {sys.argv[1]}!!!!!!!")
+		break
+	#allows users to list the conntents of CWD
+	elif command == "ls":
+		send(command)
+	else:
+		send("reached the else statment CLIENT SIDE")
+	
+		
+	command = command.split()
+	print(command)
+	print(type(command))
+	
+	
+	
+	
 
