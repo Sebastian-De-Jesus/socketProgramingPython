@@ -7,6 +7,7 @@ HEADER = 2048
 PORT = int(sys.argv[1])
 SERVER = socket.gethostbyname(socket.gethostbyname("localhost"))
 ADDR = (SERVER, PORT)
+NOFILE = "FILE DOES NOT EXISIT"
 FORMAT = "utf-8"
 DC = "GOODBYE"
 COMMAND = []
@@ -14,7 +15,7 @@ COMMAND = []
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
 
-
+# Starting our server and using threads in order to keep the server running for multiple clients
 def start():
     server.listen()
     print(f"Server is [LISTENING] on {SERVER}\n")
@@ -28,6 +29,7 @@ def start():
 
 # This code allows us to print the current working directory by passing the CREATED CONNN
 def list_files_in_current_directory(conn):
+    #Here we are getting our current working directory to print out its content
     current_directory = os.getcwd()
     files_and_directories = os.listdir(current_directory)
     #Returns to the client all the files in the directory
@@ -36,17 +38,18 @@ def list_files_in_current_directory(conn):
 
 
 # This code enables us to use the "Get" command in our current working dirrectory:
-
-def get_file_content(file_name):
+def get_file_content(conn,file_name):
     current_directory = os.getcwd()
     file_path = os.path.join(current_directory, file_name)
-
+    #the above code gives us the pile path needed
+    
+    #simple if and else to verify that the file does exit in the directory otherwise send the NOFILE str
     if os.path.isfile(file_path):
         with open(file_path, 'r') as file:
             content = file.read()
-        return content
+        return conn.send(f"{content}\n".encode(FORMAT))
     else:
-        print(f"'{file_name}' does not exist in the current directory.")
+        conn.send(NOFILE.encode(FORMAT))
         return None
 
 
@@ -70,8 +73,10 @@ def handle_client(conn, addr):
                 list_files_in_current_directory(conn)
             elif msg != "ls":
                 COMMAND = msg.split()
+                #checking if the first part of the sent command is get, if so implement the get_file
+                #function
                 if COMMAND[0] == "get":
-                    get_file_content(COMMAND[1])
+                    get_file_content(conn,COMMAND[1])
 
     conn.close()
 
