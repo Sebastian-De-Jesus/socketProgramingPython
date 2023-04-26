@@ -1,5 +1,8 @@
 # Python Socket Program:
-Author: Sebastian Reyes
+Authors: 
+Sebastian Reyes sreyes92@csu.fullerton.edu
+
+
 CLASS 471-(03) SPRING 2023
 
 ##Simple client-server, that allows the user to use the following commands.
