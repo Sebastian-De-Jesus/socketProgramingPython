@@ -1,6 +1,7 @@
 import socket
 import sys
 import os
+import re
 
 HEADER = 2048
 PORT = int(sys.argv[2])
@@ -8,6 +9,9 @@ FORMAT = "utf-8"
 NOFILE = "FILE DOES NOT EXIST"
 DC = "GOODBYE"
 SERVER = "localhost"
+#COMMAND allows for a word or numbers connected with spaces, tabs, or new lines and filenames. 
+# -> doesnt allow characters such as $, &, #
+ALLOWED_COMMAND = re.compile(r'^[\w\s\.]+')
 
 # SERVER = sys.argv[1] would be used if we would bind to 137.151.27.1 which is ecs.fullerton.edu IP
 ADDR = (SERVER, PORT)
@@ -25,8 +29,8 @@ def send(msg):
     client.send(send_length)
     client.send(message)
     print(client.recv(HEADER).decode(FORMAT))
-
-
+ 
+ 
 # In this function we follow the same syntax as above with slight modification because we are saving the
 # recieved msg from the server, we additionaly are passing a filename to the function
 
@@ -48,6 +52,7 @@ def send_get_message(msg, filename):
         with open(file_path, 'w') as file:
             file.write(recieved_response)
 
+
 def send_put_message(msg, file_name):
     message = msg.encode(FORMAT)
     msg_length = len(message)
@@ -68,11 +73,18 @@ def send_put_message(msg, file_name):
         client.send(NOFILE.encode(FORMAT))
         return None
 
-
 connected = True
 while connected:
-
-    command = input("ftp> ".split())
+    
+    while True:
+        command = input("ftp> ")
+        #if the command line is empty or if the command doesnt match the allowed parameters in ALLOWED_COMMAND
+        if not command or not ALLOWED_COMMAND.match(command):
+            print('Your command is invalid, please try again \n')
+            continue
+        #if the command is valid, then exit the loop and continue the code 
+        else:
+            break
 
     if len(command) == 0:
         continue
