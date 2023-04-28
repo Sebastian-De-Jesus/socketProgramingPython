@@ -2,7 +2,7 @@
 Author: Sebastian Reyes
 CLASS 471-(03) SPRING 2023
 
-##Simple client-server, that allows the user to use the following commands.
+## Simple client-server, that allows the user to use the following commands.
 **get**, **put**, **ls**, and lastly **quit**
 
 ### HOW TO USE
